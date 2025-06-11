@@ -1,4 +1,5 @@
 const express = require("express");
+const connectDB = require("./config/db")
 const userRoutes = require("./routes/userRoutes");
 const dotenv = require("dotenv");
 
@@ -11,6 +12,7 @@ app.get('/',(req,res)=>{
     res.send("API is called!")
 });
 
+connectDB();
 
 // app.use('/api/users',userRoutes);
 
