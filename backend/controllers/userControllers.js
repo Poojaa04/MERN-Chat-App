@@ -2,7 +2,7 @@ const asynchandler  = require("express-async-handler");
 const User  = require("../models/userModel");
 const {generateToken} = require("../config/generateToken");
 
-const registeruser = asynchandler(async(req,res)=>{
+const registerUser = asynchandler(async(req,res)=>{
     //Check is all details are entered
     const {name, email, password, pic} = req.body;
     if(!name || !email || !password ) {
@@ -35,7 +35,7 @@ const registeruser = asynchandler(async(req,res)=>{
 })
 
 //user authentication during login
-const authuser = asynchandler(async(req,res)=>{
+const authUser = asynchandler(async(req,res)=>{
     const{email,password} = req.body;
     const user = User.findOne({email});
     if(user && (await user.matchpassword(password))){
@@ -55,3 +55,6 @@ const authuser = asynchandler(async(req,res)=>{
 });
 
 //Searching users based on query string
+
+
+module.exports = {registerUser, authUser};
