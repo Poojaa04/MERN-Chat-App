@@ -14,7 +14,7 @@ app.get('/',(req,res)=>{
 
 connectDB();
 
-// app.use('/api/users',userRoutes);
+app.use('/api/users',userRoutes);
 
 const server = app.listen(5000,()=>{console.log('Server running at PORT:5000')});
 
