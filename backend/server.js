@@ -1,6 +1,7 @@
 const express = require("express");
 const connectDB = require("./config/db")
 const userRoutes = require("./routes/userRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 const dotenv = require("dotenv");
 
 const app= express();
@@ -15,6 +16,7 @@ app.get('/',(req,res)=>{
 connectDB();
 
 app.use('/api/users',userRoutes);
+app.use('/api/chat',chatRoutes);
 
 const server = app.listen(5000,()=>{console.log('Server running at PORT:5000')});
 
