@@ -98,4 +98,36 @@ const renameGroup = asynchandler(async(req,res)=>{
         return res.status(400).send("Couldn't update chat name")
     else 
     return res.status(200).json(updatedChat)
-})
+});
+
+const addToGroup = asynchandler(async(req,res)=>{
+    const {chatId,userId} = req.body;
+    const added = await Chat.findByIdAndUpdate(
+        chatId,
+       {$push:{users:userId}},
+       {new:true}
+    )
+    .populate("users","-password")
+    .populate("groupAdmin","-password")
+    if(!added) 
+        return res.status(400).send("Couldn't add to group")
+    else 
+    return res.status(200).json(added)
+});
+
+const removeFromGroup = asynchandler(async(req,res)=>{
+    const {chatId,userId} = req.body;
+    const removed = await Chat.findByIdAndUpdate(
+        chatId,
+       {$pull:{users:userId}},
+       {new:true}
+    )
+    .populate("users","-password")
+    .populate("groupAdmin","-password")
+    if(!removed) 
+        return res.status(400).send("Couldn't remove from group")
+    else 
+    return res.status(200).json(removed)
+});
+
+module.exports = {accessChat, fetchChats, createGroupChat, renameGroup, addToGroup,removeFromGroup}
