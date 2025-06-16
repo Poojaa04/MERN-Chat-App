@@ -41,4 +41,61 @@ const accessChat = asynchandler(async(req,res)=>{
             throw new Error(error.message);
          }
         }
+});
+
+const fetchChats = asynchandler(async (req,res)=>{
+try{
+Chat.find({users:{$elemMatch:{$eq: req.user._id}}})
+.populate("users","-password")
+.populate("groupAdmin","-password")
+.populate("latestMessage")
+.sort({updatedAt:-1})
+.then(async(results)=>{
+results = await User.populate(results,{
+    path: "latestmessage.sender",
+    select: "name email pic"
+});
+res.status(200).send(results);
+})
+}catch(error){
+  res.status(400);
+  throw new Error(error.message)
+}
+});
+
+const createGroupChat = asynchandler(async(req,res)=>{
+    if(!req.body.name || !req.body.users)
+        res.status(400).send("Please select the users ");
+    let users  = JSON.parse(req.body.users);
+    if(users.length<2)
+        res.status(400).send("more than 2 users are required!");
+    users.push(req.user);
+    try{
+     const groupChat = await Chat.create({
+        chatName: req.body.name,
+        isGroupChat:true,
+        users:req.users,
+        groupAdmin:req.user
+     });
+     const accessGroupChat = await Chat.findOne({_id:groupChat._id})
+     .populate("users","-password")
+     .populate("groupAdmin","-password")  
+     res.status(200).send(accessGroupChat);
+    }catch(error){
+       res.status(400)
+       throw new Error(error.message);
+    }
+});
+
+const renameGroup = asynchandler(async(req,res)=>{
+    const {chatId,chatName} = req.body;
+    const updatedChat = await Chat.findByIdAndUpdate(
+        chatId,{chatName},{new:true}
+    )
+    .populate("users","-password")
+    .populate("groupAdmin","-password")
+    if(!updatedChat) 
+        return res.status(400).send("Couldn't update chat name")
+    else 
+    return res.status(200).json(updatedChat)
 })
