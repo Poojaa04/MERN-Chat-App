@@ -2,6 +2,8 @@ const express = require("express");
 const connectDB = require("./config/db")
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const messageRoutes  = require ("./routes/messageRoutes.js");
+const {notFound, errorHandler} = require("./middlewares/errorMiddleware")
 const dotenv = require("dotenv");
 
 const app= express();
@@ -17,6 +19,9 @@ connectDB();
 
 app.use('/api/users',userRoutes);
 app.use('/api/chat',chatRoutes);
+app.use('/api/message',messageRoutes);
+app.use(notFound);
+app.use(errorHandler);
 
 const server = app.listen(5000,()=>{console.log('Server running at PORT:5000')});
 
